@@ -19,6 +19,16 @@ mongoose
     console.log("Database connection unsuccessful!", err);
   });
 
+app.all("/", (req, res, next) => {
+  res.json({
+    message: "Hello client",
+  });
+});
+
+app.use((err, req, res, next) => {
+  console.log(err);
+});
+
 app.listen(process.env.PORT, () => {
   console.log(`listening to port no ${process.env.PORT}`);
 });
