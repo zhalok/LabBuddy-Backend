@@ -4,6 +4,7 @@ const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const userRouter = require("./routes/userRouter");
 const labRouter=require('./routes/labRouter');
+const questionRouter=require('./routes/questionRouter')
 
 dotenv.config({ path: ".env" });
 app.use(express.json());
@@ -31,6 +32,7 @@ app.all("/", (req, res, next) => {
 
 app.use("/user", userRouter);
 app.use("/lab", labRouter);
+app.use("/question", questionRouter);
 
 app.use((err, req, res, next) => {
   // console.log(err);
@@ -53,47 +55,47 @@ io.on('connection',(socket)=>{
   console.log("Connected to socket.io")
 
   socket.on('setup',userData=>{
-      socket.join(userData);
-      console.log('Connected',userData)
+      socket.join(userData.id);
+      console.log('Connected',userData.id)
       socket.emit("connected");
   });
   socket.on('join lab',(lab)=>{
-      socket.join(lab._id)
+      socket.join(lab)
       console.log('User joined',lab)
   })
 
-  socket.on('new K',({lab,user,k})=>{
-      lab.users.forEach(u=>{
-          if(u._id===user._id) return
-          socket.in(u._id).emit('received K',k)
+  socket.on('new K',({users,user,k})=>{
+      users.forEach(u=>{
+          if(u.id===user.id) return
+          socket.in(u.id).emit('received K',k)
       })
       
   })
 
-  socket.on('Open Dropdown',({val,user,lab})=>{
-      lab.users.forEach(u=>{
-          if(u._id===user._id) return
-          socket.in(u._id).emit('dropdown open',{val,user,lab})
+  socket.on('Open Dropdown',({val,user,users})=>{
+      users.forEach(u=>{
+          if(u.id===user.id) return
+          socket.in(u.id).emit('dropdown open',{val,user,users})
       })
       
   })
   socket.on('reload',(lab)=>{
-      socket.in(lab._id).emit('load')
+      socket.in(lab.id).emit('load')
   })
 
-  socket.on('mouse',({mousePos,user,lab})=>{
-      lab.users.forEach(u=>{
-          if(u._id!==user._id) return
-          socket.in(u._id).emit('mouseback',{mousePos,u,lab})
+  socket.on('mouse',({mousePos,user,users})=>{
+      users.forEach(u=>{
+          if(u.id===user.id) return
+          socket.broadcast.emit('mouseback',{mousePos,user:u,users})
       })
-      socket.in(lab).emit('mouseback',{mousePos,user,lab})
   })
 
 
   
 
+
   socket.off("setup", (userData) => {
       console.log("USER DISCONNECTED");
-      socket.leave(userData._id);
+      socket.leave(userData.id);
     });
 });
