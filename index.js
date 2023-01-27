@@ -2,7 +2,10 @@ const express = require("express");
 const app = express();
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
+const userRouter = require("./routes/userRouter");
+
 dotenv.config({ path: ".env" });
+app.use(express.json());
 
 mongoose
   .connect(process.env.DB_URL, {
@@ -24,6 +27,8 @@ app.all("/", (req, res, next) => {
     message: "Hello client",
   });
 });
+
+app.use("/user", userRouter);
 
 app.use((err, req, res, next) => {
   console.log(err);
