@@ -31,7 +31,8 @@ app.all("/", (req, res, next) => {
 app.use("/user", userRouter);
 
 app.use((err, req, res, next) => {
-  console.log(err);
+  // console.log(err);
+  res.status(err.statusCode).json({ message: err.message });
 });
 
 app.listen(process.env.PORT, () => {

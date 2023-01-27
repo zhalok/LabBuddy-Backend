@@ -101,4 +101,17 @@ userController.verifyUser = catchAsync(async (req, res, next) => {
     message: "OTP expired",
   });
 });
+
+userController.getUser = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  console.log(req.user);
+  const user = await userModel.findById(id);
+  res.json(user);
+});
+
+userController.getAllUsers = catchAsync(async (req, res, next) => {
+  const users = await userModel.find({});
+  res.json(users);
+});
+
 module.exports = userController;
