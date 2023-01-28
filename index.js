@@ -39,7 +39,7 @@ app.all("/", (req, res, next) => {
 app.use("/user", userRouter);
 app.use("/lab", labRouter);
 app.use("/file", fileRouter);
-app.use("/exam", express.urlencoded({ extended: true }), examRouter);
+app.use("/exam", examRouter);
 
 app.use((err, req, res, next) => {
   // console.log(err);

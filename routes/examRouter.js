@@ -23,11 +23,19 @@ var upload = multer({
   storage: storage,
 });
 
+router.get("/", ensureAuthenticated, examController.getExams);
+router.get("/:id", ensureAuthenticated, examController.getExamById);
 router.post("/create", ensureAuthenticated, examController.createExam);
-router.post(
-  "/createFromCSV",
+router.get(
+  "/questions/:id",
   ensureAuthenticated,
-  upload.single("file"),
-  examController.createExamFromCSV
+  examController.getExamQuestions
 );
+// router.post(
+//   "/createFromCSV",
+//   express.urlencoded({ extended: true }),
+//   ensureAuthenticated,
+//   upload.single("file"),
+//   examController.createExamFromCSV
+// );
 module.exports = router;
